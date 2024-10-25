@@ -1,5 +1,5 @@
 @IsTest
-@SuppressWarnings('PMD.MethodNamingConventions')
+@SuppressWarnings('PMD.MethodNamingConventions,PMD.ApexDoc')
 private class CustomSettings_TEST {
   @IsTest
   static void getInstance() {
@@ -18,7 +18,6 @@ private class CustomSettings_TEST {
     TestCustomSettings settings = new TestCustomSettings(new Account());
 
     CustomSettings.setMockValue('Account', 'My_Test_Field__c', 'My Test Value');
-    Object value = settings.get('My_Test_Field__c');
     System.Assert.areEqual(
       'My Test Value',
       settings.get('My_Test_Field__c'),
@@ -51,11 +50,9 @@ private class CustomSettings_TEST {
   }
   private class TestCustomSettings extends CustomSettings {
     private final SObject mockInstance;
-
     public TestCustomSettings(SObject mock) {
       this.mockInstance = mock;
     }
-
     public override SObject getInstance(Id userId) {
       return mockInstance;
     }

@@ -26,7 +26,7 @@ public inherited sharing class MyExampleSettings extends CustomSettings {
 ```java
 MyExampleSettings settings = new MyExampleSettings();
 // Method .get returns an Object, so cast it to expected data type
-String myTextField = (String)settings.get('My_Custom_Text_Field');
+String myTextValue = (String)settings.get('My_Custom_Text_Field__c');
 ```
 If a Custom Setting has not be instantiated for the running user, the default value of that field will be returned instead.
 
@@ -37,7 +37,7 @@ Writing unit tests that depend on Custom Settings is bad practice, so it's often
 static void myUnitTest() {
     CustomSettings.setMockValue(
         'My_Example_Settings__c', // API name (including namespace) of Custom Setting object to mock
-        'My_Custom_Text_Field', // API name (including namespace) of Custom Setting field to mock
+        'My_Custom_Text_Field__c', // API name (including namespace) of Custom Setting field to mock
         'My mocked text value' // Mock value to return
     );
     // For the remainder of the test, anytime this value is requested anywhere, the mock value will be returned
