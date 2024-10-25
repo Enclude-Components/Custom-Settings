@@ -11,9 +11,10 @@
  *    }
  * }
  */
+@SuppressWarnings('PMD.CognitiveComplexity')  // This code is beautiful just the way it is 😤
 public inherited sharing virtual class CustomSettings {
   @TestVisible
-  private static final Map<String, Object> TEST_VALUES = new Map<String, Object>();
+  private static final Map<String, Map<String, Object>> MOCK_VALUES = new Map<String, Map<String, Object>>();
   /**
    * @description   Virtual method that concrete implementations must override to return
    *                their specific Custom Setting instance for given User
@@ -32,38 +33,50 @@ public inherited sharing virtual class CustomSettings {
   }
   /**
    * @description       Get Custom Setting field value for running user
-   * @param             fieldName API name of field to retrieve
+   * @param             fieldApiName API name of field to retrieve
    * @return            Object value returned, must be cast to expected type
    */
-  public Object get(String fieldName) {
-    return get(fieldName, UserInfo.getUserId());
+  public Object get(String fieldApiName) {
+    return get(fieldApiName, UserInfo.getUserId());
   }
   /**
    * @description       Get Custom Setting field value for provided user
-   * @param             fieldName API name of field to retrieve
+   * @param             fieldApiName API name of field to retrieve
    * @param             userId ID of user to retrieve values for
    * @return            Object value returned, must be cast to expected type
    */
-  public Object get(String fieldName, Id userId) {
-    // If a TEST_VALUE exists, we must be in a unit test, so return the mock value
-    if (TEST_VALUES.containsKey(fieldName)) {
-      return TEST_VALUES.get(fieldName);
-    }
-    // Get the instance
+  public Object get(String fieldApiName, Id userId) {
     SObject instance = getInstance(userId);
-    if (instance != null && instance.get('Name') == null) {
-      // Custom Setting has not been instantiated in Setup, so return field's default value (might still be null)
-      return getDefaultValue(instance, fieldName);
+    if (instance == null) {
+      return null;
     }
-    return instance?.get(fieldName);
+    // Get mock value if in test
+    if (Test.isRunningTest()) {
+      String objectApiName = String.valueOf(instance.getSObjectType());
+      if (MOCK_VALUES.containsKey(objectApiName)) {
+        return MOCK_VALUES.get(objectApiName).get(fieldApiName);
+      }
+    }
+    if (instance.get('Name') == null) {
+      // Custom Setting has not been instantiated in Setup, so return field's default value (might still be null)
+      return getDefaultValue(instance, fieldApiName);
+    }
+    return instance.get(fieldApiName);
   }
   /**
    * @description       Get Custom Setting default field value
    * @param             instance SObject instance of the Custom Setting
-   * @param             fieldName API name of the field
+   * @param             fieldApiName API name of the field
    * @return            Default field value or null if none
    */
-  private Object getDefaultValue(SObject instance, String fieldName) {
-    return instance?.getSObjectType()?.newSObject(null, true)?.get(fieldName);
+  private Object getDefaultValue(SObject instance, String fieldApiName) {
+    return instance?.getSObjectType()?.newSObject(null, true)?.get(fieldApiName);
+  }
+  @TestVisible
+  private static void setMockValue(String objectApiName, String fieldApiName, Object value) {
+    if (!MOCK_VALUES.containsKey(objectApiName)) {
+      MOCK_VALUES.put(objectApiName, new Map<String, Object>());
+    }
+    MOCK_VALUES.get(objectApiName).put(fieldApiName, value);
   }
 }

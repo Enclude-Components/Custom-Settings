@@ -8,13 +8,17 @@ private class CustomSettings_TEST {
       settings.getInstance(),
       'CustomSettings.getInstance returned an unexpected value'
     );
+    System.Assert.isNull(
+      settings.get('My_Test_Field__c'),
+      'CustomSettings.getInstance returned an unexpected value'
+    );
   }
   @IsTest
   static void get_testValue() {
-    CustomSettings settings = new CustomSettings();
+    TestCustomSettings settings = new TestCustomSettings(new Account());
 
-    CustomSettings.TEST_VALUES.put('My_Test_Field__c', 'My Test Value');
-
+    CustomSettings.setMockValue('Account', 'My_Test_Field__c', 'My Test Value');
+    Object value = settings.get('My_Test_Field__c');
     System.Assert.areEqual(
       'My Test Value',
       settings.get('My_Test_Field__c'),
