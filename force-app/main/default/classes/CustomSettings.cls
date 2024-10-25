@@ -11,7 +11,9 @@
  *    }
  * }
  */
-@SuppressWarnings('PMD.CognitiveComplexity')  // This code is beautiful just the way it is 😤
+@SuppressWarnings(
+  'PMD.CognitiveComplexity'
+) // This code is beautiful just the way it is 😤
 public inherited sharing virtual class CustomSettings {
   @TestVisible
   private static final Map<String, Map<String, Object>> MOCK_VALUES = new Map<String, Map<String, Object>>();
@@ -70,10 +72,17 @@ public inherited sharing virtual class CustomSettings {
    * @return            Default field value or null if none
    */
   private Object getDefaultValue(SObject instance, String fieldApiName) {
-    return instance?.getSObjectType()?.newSObject(null, true)?.get(fieldApiName);
+    return instance
+      ?.getSObjectType()
+      ?.newSObject(null, true)
+      ?.get(fieldApiName);
   }
   @TestVisible
-  private static void setMockValue(String objectApiName, String fieldApiName, Object value) {
+  private static void setMockValue(
+    String objectApiName,
+    String fieldApiName,
+    Object value
+  ) {
     if (!MOCK_VALUES.containsKey(objectApiName)) {
       MOCK_VALUES.put(objectApiName, new Map<String, Object>());
     }
